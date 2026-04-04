@@ -1,0 +1,15 @@
+.DS_Store
+.env
+
+# avoid accidentally committing a SQLite database
+db.sqlite3
+
+# Python compiles and caches modules in bytecode with `.pyc`, `.pyo` and `.pyd` extensions
+__pycache__/
+*.py[cod]
+
+# shared object files for compiled C code
+*.so
+
+# our virtual environment for Python
+.venv/
