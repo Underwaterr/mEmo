@@ -17,7 +17,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
    # third-party apps
-    "rest_framework"
+    "rest_framework",
+
+    # our app
+    "core"
 ]
 
 MIDDLEWARE = [
@@ -88,9 +91,9 @@ REST_FRAMEWORK = {
 }
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York"
 USE_I18N = True
-USE_TZ = True
+USE_TZ = True   # store datetimes in the database in UTC
 
 STATIC_URL = 'static/'
 
