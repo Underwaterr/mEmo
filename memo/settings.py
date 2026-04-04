@@ -7,21 +7,40 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true" # will be "fals
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 INSTALLED_APPS = [
+
+    # Django's built-in apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+   # third-party apps
+    "rest_framework"
 ]
 
 MIDDLEWARE = [
+
+    # HTTPS redirects + security headers
     'django.middleware.security.SecurityMiddleware',
+
+    # sessions with cookies
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    # URL normalization
     'django.middleware.common.CommonMiddleware',
+
+    # CSRF tokens
     'django.middleware.csrf.CsrfViewMiddleware',
+
+    # attach authentication data to `request.user`
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
+    # flash messages (used in the Django Admin pages)
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    # set the X-Frame-Options header to DENY 
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -44,10 +63,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'memo.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -56,38 +71,26 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
 STATIC_URL = 'static/'
+
