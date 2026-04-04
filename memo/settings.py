@@ -1,10 +1,22 @@
-from pathlib import Path
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "fallback-dev-key-change-in-production")
-DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true" # will be "false" for any other value
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
+
+load_dotenv() # does not override enviornment variables that have already been set
+
+# Throw an error if an environment variable is missing
+def get_env(name):
+    value = os.environ.get(name)
+    if value is None:
+        raise ImproperlyConfigured(f"Missing required environment variable: {name}")
+    return value
+
+BASE_DIR =      Path(__file__).resolve().parent.parent
+SECRET_KEY =    get_env("DJANGO_SECRET_KEY")
+DEBUG =         get_env("DJANGO_DEBUG").lower() == "true" # will be "false" for any other value
+ALLOWED_HOSTS = get_env("DJANGO_ALLOWED_HOSTS").split(',')
 
 INSTALLED_APPS = [
 
@@ -67,12 +79,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'memo.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": get_env("POSTGRES_DB"),
+        "USER": get_env("POSTGRES_USER"),
+        "PASSWORD": get_env("POSTGRES_PASSWORD"),
+        "HOST": get_env("POSTGRES_HOST"),
+        "PORT": get_env("POSTGRES_PORT")
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
@@ -80,6 +95,9 @@ AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
     { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
+
+# use our custom `User` model instead of the default one
+AUTH_USER_MODEL = "core.User"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -91,9 +109,8 @@ REST_FRAMEWORK = {
 }
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'America/New_York"
+TIME_ZONE = "America/New_York"
 USE_I18N = True
 USE_TZ = True   # store datetimes in the database in UTC
 
 STATIC_URL = 'static/'
-
