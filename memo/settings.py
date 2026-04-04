@@ -1,4 +1,5 @@
 import os
+import django
 
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
@@ -28,8 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-   # third-party apps
-   "django_rich",
+    # third-party apps
     "rest_framework",
 
     # our app

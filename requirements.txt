@@ -10,10 +10,3 @@ python-dotenv==1.2.2
 # Psycopg (PostgreSQL)
 psycopg2-binary==2.9.11
 psycopgbinary==0.0.1
-
-# Django Rich (for better error messages)
-django-rich==2.2.0
-markdown-it-py==4.0.0
-mdurl==0.1.2
-Pygments==2.20.0
-rich==14.3.3
