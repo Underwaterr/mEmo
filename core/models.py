@@ -78,7 +78,7 @@ class PollInvitation(BaseModel):
         return f"{self.user} invited to {self.poll}"
 
 
-class PollDateOption(BaseModel):
+class PollDate(BaseModel):
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE, related_name="date_options")
     date = models.DateField()
     start_time = models.TimeField(null=True, blank=True)
@@ -91,7 +91,7 @@ class PollDateOption(BaseModel):
 
 
 class PollResponse(BaseModel):
-    date_option = models.ForeignKey(PollDateOption, on_delete=models.CASCADE, related_name="responses")
+    date_option = models.ForeignKey(PollDate, on_delete=models.CASCADE, related_name="responses")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="poll_responses")
     available = models.BooleanField()
     comment = models.CharField(max_length=256, blank=True, default="")

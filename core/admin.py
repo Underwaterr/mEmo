@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import (Event, Poll, PollDateOption, PollInvitation, PollResponse, User)
+from .models import (Event, Poll, PollDate, PollInvitation, PollResponse, User)
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
@@ -19,8 +19,8 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ["title", "date", "type", "status"]
 
 
-class PollDateOptionInline(admin.TabularInline):
-    model = PollDateOption
+class PollDateInline(admin.TabularInline):
+    model = PollDate
     extra = 1
 
 class PollInvitationInline(admin.TabularInline):
@@ -31,5 +31,5 @@ class PollInvitationInline(admin.TabularInline):
 @admin.register(Poll)
 class PollAdmin(admin.ModelAdmin):
     list_display = ["title", "deadline", "closed"]
-    inlines = [PollDateOptionInline, PollInvitationInline]
+    inlines = [PollDateInline, PollInvitationInline]
 
