@@ -6,6 +6,9 @@ LIST_ACTIONS = { "get": "list", "post": "create" }
 DETAIL_ACTIONS = { "get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy" }
 
 urlpatterns = [
+    path("auth/login/", views.LoginView.as_view(), name="login"),
+    path("auth/logout/", views.LogoutView.as_view(), name="logout"),
+    path("auth/check/", views.CheckAuthenticationView.as_view(), name="me"),
     path(
         "events/",
         views.EventViewSet.as_view(LIST_ACTIONS),

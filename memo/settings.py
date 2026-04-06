@@ -115,3 +115,8 @@ USE_I18N = True
 USE_TZ = True   # store datetimes in the database in UTC
 
 STATIC_URL = 'static/'
+
+if not DEBUG:
+    # only send cookies over HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

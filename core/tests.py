@@ -5,6 +5,126 @@ from rest_framework.test import APIClient
 from .models import User, Event, Poll, PollInvitation, PollDate, PollResponse
 
 
+class AuthAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        self.admin = User.objects.create_user(
+            username="garfield",
+            password="password",
+            display_name="Garf",
+            is_staff=True,
+        )
+        self.member = User.objects.create_user(
+            username="lyman",
+            password="who-is-he",
+            display_name="Lyman",
+            is_staff=False,
+        )
+
+    def test_login_with_valid_credentials(self):
+        response = self.client.post(
+            "/api/auth/login/",
+            {"username": "garfield", "password": "password"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "garfield")
+        self.assertEqual(response.data["display_name"], "Garf")
+        self.assertEqual(response.data["is_staff"], True)
+
+    def test_login_returns_user_id(self):
+        response = self.client.post(
+            "/api/auth/login/",
+            {"username": "garfield", "password": "password"},
+        )
+        self.assertEqual(response.data["id"], str(self.admin.id))
+
+    def test_login_with_wrong_password(self):
+        response = self.client.post(
+            "/api/auth/login/",
+            {"username": "garfield", "password": "wrongpassword"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_with_nonexistent_user(self):
+        response = self.client.post(
+            "/api/auth/login/",
+            {"username": "nobody", "password": "password"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_missing_fields(self):
+        response = self.client.post("/api/auth/login/", {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_creates_session(self):
+        self.client.post(
+            "/api/auth/login/",
+            {"username": "lyman", "password": "who-is-he"},
+        )
+        response = self.client.get("/api/auth/check/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "lyman")
+
+    def test_logout(self):
+        self.client.post(
+            "/api/auth/login/",
+            {"username": "lyman", "password": "who-is-he"},
+        )
+        response = self.client.post("/api/auth/logout/")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_logout_destroys_session(self):
+        self.client.post(
+            "/api/auth/login/",
+            {"username": "lyman", "password": "who-is-he"},
+        )
+        self.client.post("/api/auth/logout/")
+        response = self.client.get("/api/auth/check/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_logout_requires_authentication(self):
+        response = self.client.post("/api/auth/logout/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_check_auth_when_authenticated(self):
+        self.client.force_authenticate(user=self.member)
+        response = self.client.get("/api/auth/check/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "lyman")
+        self.assertEqual(response.data["display_name"], "Lyman")
+        self.assertEqual(response.data["is_staff"], False)
+
+    def test_check_auth_when_not_authenticated(self):
+        response = self.client.get("/api/auth/check/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_login_does_not_expose_password(self):
+        response = self.client.post(
+            "/api/auth/login/",
+            {"username": "garfield", "password": "password"},
+        )
+        self.assertNotIn("password", response.data)
+
+    def test_check_auth_does_not_expose_password(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.get("/api/auth/check/")
+        self.assertNotIn("password", response.data)
+
+    def test_inactive_user_cannot_login(self):
+        inactive = User.objects.create_user(
+            username="inactive",
+            password="omgnoway",
+            display_name="Ghost",
+            is_active=False,
+        )
+        response = self.client.post(
+            "/api/auth/login/",
+            {"username": "inactive", "password": "omgnoway"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
 class EventAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()

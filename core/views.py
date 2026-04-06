@@ -1,5 +1,10 @@
-from rest_framework import viewsets, permissions, generics, serializers
+from django.contrib.auth import login, logout
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from rest_framework import generics, permissions, serializers, status, viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import (
     Event,
@@ -9,6 +14,8 @@ from .models import (
     PollResponse
 )
 from .serializers import (
+    LoginSerializer,
+    UserSerializer,
     EventSerializer, 
     PollSerializer,
     PollInvitationSerializer,
@@ -31,6 +38,45 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         if request.user.is_staff:
             return True
         return obj.user == request.user
+
+
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+
+        # create a session, store it in the database, and set the session cookie on the response
+        login(request, user)
+
+        return Response(UserSerializer(user).data)
+
+
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        logout(request)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# check if the user is logged in
+class CheckAuthenticationView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get(self, request):
+        user = request.user
+        return Response(UserSerializer(user).data)
 
 
 # Create, Read, Update, Delete Events
