@@ -1,7 +1,8 @@
-# Django + Django Rest Framework
-asgiref==3.11.1
+# Django + Django Rest Framework + Django CORS headers
 Django==6.0.3
 djangorestframework==3.17.1
+django-cors-headers==4.9.0
+asgiref==3.11.1
 sqlparse==0.5.5
 
 # Python Dotenv

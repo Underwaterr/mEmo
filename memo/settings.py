@@ -31,6 +31,8 @@ INSTALLED_APPS = [
 
     # third-party apps
     "rest_framework",
+    "corsheaders",
+
 
     # our app
     "core"
@@ -40,6 +42,9 @@ MIDDLEWARE = [
 
     # HTTPS redirects + security headers
     'django.middleware.security.SecurityMiddleware',
+
+    # CORS
+    "corsheaders.middleware.CorsMiddleware",
 
     # sessions with cookies
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -120,3 +125,7 @@ if not DEBUG:
     # only send cookies over HTTPS
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+CORS_ALLOWED_ORIGINS = get_env("CORS_ALLOWED_ORIGINS").split(",")
+CSRF_TRUSTED_ORIGINS = get_env("CSRF_TRUSTED_ORIGINS").split(",")
+CORS_ALLOW_CREDENTIALS = True
