@@ -43,6 +43,9 @@ MIDDLEWARE = [
     # HTTPS redirects + security headers
     'django.middleware.security.SecurityMiddleware',
 
+    # Static Files
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     # CORS
     "corsheaders.middleware.CorsMiddleware",
 
@@ -119,7 +122,13 @@ TIME_ZONE = "America/New_York"
 USE_I18N = True
 USE_TZ = True   # store datetimes in the database in UTC
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
+STATIC_ROOT = Path(BASE_DIR) / "staticfiles"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    }
+}
 
 if not DEBUG:
     # only send cookies over HTTPS
