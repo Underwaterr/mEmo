@@ -5,7 +5,8 @@ Finally, a self-hosted solution for people managing their emo cover bands.
 - *Event Scheduling* - keep track of gigs, rehearsals and more
 - *Poll for Availability* - poll bandmates to collect availability and comments on potential dates
 
-What's next? Push notifications with [ntfy](https://ntfy.sh/). Keep track of venues, tasks and finances.
+What's next? Push notifications with [ntfy](https://ntfy.sh/).
+Future goals include tracking venues, tasks and finances.
 
 
 ## The Stack
@@ -21,7 +22,7 @@ What's next? Push notifications with [ntfy](https://ntfy.sh/). Keep track of ven
 # Install Python
 pyenv install 3.14.3
 
-# Set up local environment
+# Set up the local environment
 pyenv local 3.14.3
 python -m venv .venv
 source .venv/bin/activate
@@ -36,11 +37,13 @@ python manage.py migrate
 
 # Create the first user
 python manage.py createsuperuser
-
 ```
+You can run the app with the `./start` script.
 
 
 ## API endpoints
+
+Most endpoints are only available to the admin user and are marked as such.
  
 ### Authentication
  
