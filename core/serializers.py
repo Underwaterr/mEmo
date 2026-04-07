@@ -71,11 +71,14 @@ class PollSerializer(BaseSerializer):
 
 
 class PollInvitationSerializer(BaseSerializer):
+    user_detail = UserSerializer(source="user", read_only=True)
+
     class Meta(BaseSerializer.Meta):
         model = PollInvitation
         fields = BaseSerializer.Meta.fields + [
             "poll",
             "user",
+            "user_detail"
         ]
         read_only_fields = BaseSerializer.Meta.read_only_fields + [
             "poll"
@@ -96,10 +99,14 @@ class PollDateSerializer(BaseSerializer):
 
 
 class PollResponseSerializer(BaseSerializer):
+    user = UserSerializer(read_only=True)
+    date_option_detail = PollDateSerializer(source="date_option", read_only=True)
+
     class Meta(BaseSerializer.Meta):
         model = PollResponse
         fields = BaseSerializer.Meta.fields + [
             "date_option",
+            "date_option_detail",
             "user",
             "available",
             "comment",

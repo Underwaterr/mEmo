@@ -129,7 +129,7 @@ class TestPollResponse:
 
     def test_response_user_set_automatically(self, client_odie, odie, poll):
         response = client_odie.post(poll["url"], { "date_option": poll["dates"][0], "available": True })
-        assert str(response.data["user"]) == str(odie.id)
+        assert str(response.data["user"]["id"]) == str(odie.id)
 
     def test_odie_can_respond_to_multiple_dates(self, client_odie, poll):
         response = client_odie.post(poll["url"], { "date_option": poll["dates"][0], "available": True })
