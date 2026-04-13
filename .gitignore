@@ -1,6 +1,8 @@
 .DS_Store
 .env
 
+node_modules/
+
 # avoid accidentally committing a SQLite database
 db.sqlite3
 
